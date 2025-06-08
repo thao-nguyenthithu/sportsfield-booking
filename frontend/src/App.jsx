@@ -1,9 +1,26 @@
-export default function App() {
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Header from './components/Header';
+import Home from './components/Home';
+import Login from './components/Login';
+import BookingForm from './components/BookingForm';
+import Register from './components/Register';
+import './App.css';
+
+function App() {
   return (
-    <div className="min-h-screen bg-blue-100 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-blue-600">
-        Tailwind hoạt động rồi! 
-      </h1>
-    </div>
+    <Router>
+      <div className="bg-gray-100 text-gray-800">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/book" element={<BookingForm />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
+
+export default App;

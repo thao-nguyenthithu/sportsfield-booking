@@ -4,6 +4,9 @@ import com.sportsfield.backend.dto.VerifyRegisterDto;
 import com.sportsfield.backend.entity.User;
 import com.sportsfield.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +28,21 @@ public class UserService {
         u.setEnabled(true);
         userRepo.save(u);
     }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
+    public boolean passwordMatch(String raw, String hashed) {
+        return encoder.matches(raw, hashed);
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        var opt = userRepo.findByEmail(email);
+        if (opt.isPresent()) {
+            var user = opt.get();
+            user.setPassword(encoder.encode(newPassword));
+            userRepo.save(user);
+        }
+    }
+
 }

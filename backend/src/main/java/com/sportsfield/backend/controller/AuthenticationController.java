@@ -55,4 +55,61 @@ public class AuthenticationController {
         authService.sendCode(req.get("email"));
         return ResponseEntity.ok(Map.of("message", "resent"));
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
+        String email = req.get("email");
+        String password = req.get("password");
+        if (!email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,}$")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email không hợp lệ"));
+        }
+        var userOpt = userService.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email chưa được đăng ký"));
+        }
+        var user = userOpt.get();
+        if (!userService.passwordMatch(password, user.getPassword())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Mật khẩu sai. Vui lòng thử lại"));
+        }
+        if (!user.isEnabled()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Tài khoản chưa kích hoạt"));
+        }
+        return ResponseEntity.ok(Map.of("message", "success"));
+    }
+
+    @PostMapping("/forgot-password/send-code")
+    public ResponseEntity<?> sendForgotCode(@RequestBody Map<String, String> req) {
+        String email = req.get("email");
+        if (!userService.emailExists(email)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email chưa được đăng ký"));
+        }
+        authService.sendCode(email);
+        return ResponseEntity.ok(Map.of("message", "sent"));
+    }
+
+    @PostMapping("/forgot-password/verify")
+    public ResponseEntity<?> verifyForgot(@RequestBody Map<String, String> req) {
+        String email = req.get("email");
+        String code = req.get("code");
+        if (!authService.verifyCode(email, code)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Mã xác thực không hợp lệ hoặc đã hết hạn."));
+        }
+        return ResponseEntity.ok(Map.of("message", "verified"));
+    }
+
+    @PostMapping("/forgot-password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> req) {
+        String email = req.get("email");
+        String password = req.get("password");
+        userService.updatePassword(email, password);
+        return ResponseEntity.ok(Map.of("message", "reset"));
+    }
+ 
+    @PostMapping("/check-email-exists")
+    public Map<String, Boolean> checkEmailExists(@RequestBody Map<String, String> req) {
+        String email = req.get("email");
+        boolean exists = userService.emailExists(email);
+        return Map.of("exists", exists);
+    }
+
 }

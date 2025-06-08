@@ -1,9 +1,13 @@
+import React, { useState } from 'react';
+import Register from './components/Register';
+import Login from './components/Login';
+
 export default function App() {
+  const [view, setView] = useState('register');
   return (
-    <div className="min-h-screen bg-blue-100 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-blue-600">
-        Tailwind hoạt động rồi! 
-      </h1>
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      {view === 'register' && <Register onLogin={() => setView('login')} />}
+      {view === 'login' && <Login onRegister={() => setView('register')} />}
     </div>
   );
 }

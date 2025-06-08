@@ -1,75 +1,48 @@
 package com.sportsfield.backend.service;
 
-import java.util.Date;
-import java.util.Random;
+import com.sportsfield.backend.dto.VerifyRegisterDto;
+import com.sportsfield.backend.entity.User;
+import com.sportsfield.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.sportsfield.backend.entity.User;
-import com.sportsfield.backend.repository.UserRepository;
-
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepo;
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-    // Lưu trữ OTP tạm thời (có thể dùng Redis hoặc Map trong thực tế)
-    private String storedOtp;
-    private String otpEmail;
-
-    public boolean isEmailExists(String email) {
-        return userRepository.existsByEmail(email);
+    public boolean emailExists(String email) {
+        return userRepo.existsByEmail(email);
     }
 
-    public User findByEmailAndPassword(String email, String rawPassword) {
-        User user = userRepository.findByEmail(email);
-        if (user != null && passwordEncoder.matches(rawPassword, user.getPassword())) {
-            return user;
+    public void registerAndEnable(VerifyRegisterDto dto) {
+        User u = new User();
+        u.setEmail(dto.getEmail());
+        u.setFullName(dto.getFullName());
+        u.setPassword(encoder.encode(dto.getPassword()));
+        u.setEnabled(true);
+        userRepo.save(u);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
+    public boolean passwordMatch(String raw, String hashed) {
+        return encoder.matches(raw, hashed);
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        var opt = userRepo.findByEmail(email);
+        if (opt.isPresent()) {
+            var user = opt.get();
+            user.setPassword(encoder.encode(newPassword));
+            userRepo.save(user);
         }
-        return null;
     }
 
-    public User saveUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Email đã tồn tại!");
-        }
-        if (user.getUsername() == null || user.getUsername().isEmpty()) {
-            user.setUsername(user.getEmail().split("@")[0]);
-        }
-        user.setCreatedAt(new Date());
-        return userRepository.save(user);
-    }
-
-    public void sendOtp(String email) {
-        // Tạo OTP ngẫu nhiên (6 chữ số)
-        String otp = String.format("%06d", new Random().nextInt(999999));
-        storedOtp = otp;
-        otpEmail = email;
-
-        // Gửi email
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Xác nhận đăng ký - Mã OTP");
-        message.setText("Mã xác nhận của bạn là: " + otp + ". Vui lòng không chia sẻ mã này với bất kỳ ai.");
-        mailSender.send(message);
-    }
-
-    public boolean verifyOtp(String email, String otp) {
-        if (otpEmail != null && otpEmail.equals(email) && storedOtp != null && storedOtp.equals(otp)) {
-            storedOtp = null; // Xóa OTP sau khi xác thực
-            otpEmail = null;
-            return true;
-        }
-        return false;
-    }
 }

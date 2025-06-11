@@ -25,6 +25,12 @@ const Sidebar = ({ setActiveSection }) => {
         </li>
         <li
           className="hover:bg-[#3B82F6] p-2 rounded cursor-pointer"
+          onClick={() => setActiveSection("Quản lý chi nhánh")}
+        >
+          Quản lý chi nhánh
+        </li>
+        <li
+          className="hover:bg-[#3B82F6] p-2 rounded cursor-pointer"
           onClick={() => setActiveSection("Quản lý Manager")}
         >
           Quản lý Manager

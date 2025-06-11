@@ -1,4 +1,4 @@
-package com.sportsfield.backend.config.controller;
+package com.sportsfield.backend.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -20,8 +20,6 @@ export default function Register({ onLogin }) {
   const [justSent, setJustSent] = useState(false);
   const [verifyError, setVerifyError] = useState('');
 
-
-  // Clear "Mã mới đã được gửi" sau 3s
   useEffect(() => {
     if (justSent) {
       const timer = setTimeout(() => setJustSent(false), 3000);
@@ -29,8 +27,6 @@ export default function Register({ onLogin }) {
     }
   }, [justSent]);
 
-
-  // Validate fields
   const validateEmail = async () => {
     let msg = '';
     const re = /^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/;
@@ -64,14 +60,12 @@ export default function Register({ onLogin }) {
     return !msg;
   };
 
-
   const handleNext = async () => {
     const ok1 = await validateEmail();
     const ok2 = validateFullName();
     const ok3 = validatePassword();
     const ok4 = validateConfirm();
     if (!(ok1 && ok2 && ok3 && ok4)) return;
-
 
     try {
       fetch('/api/auth/send-code', {
@@ -84,7 +78,6 @@ export default function Register({ onLogin }) {
     }
     setStep(2);
   };
-
 
   const handleVerify = async () => {
     setVerifyError('');
@@ -107,7 +100,6 @@ export default function Register({ onLogin }) {
   };
 
 
-  // Resend
   const handleResend = async () => {
     setSending(true);
     setJustSent(false);
@@ -125,7 +117,6 @@ export default function Register({ onLogin }) {
   };
 
 
-  // Common change
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
@@ -140,6 +131,8 @@ export default function Register({ onLogin }) {
 
 
   return (
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col flex-grow items-center justify-center">
+
     <div className="w-full max-w-md bg-gray-800 p-6 rounded-lg">
       {step === 1 ? (
         <> {/* Step1 */}
@@ -224,6 +217,7 @@ export default function Register({ onLogin }) {
           <p className="text-center text-sm"><button onClick={()=>setStep(1)} className="text-indigo-400 underline">Quay lại</button></p>
         </>
       )}
+    </div>
     </div>
   );
 }

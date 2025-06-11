@@ -26,4 +26,7 @@ public class User {
 
     @Column(nullable = false)
     private boolean enabled;
+
+    @Column(nullable=false)
+    private String Role;
 }

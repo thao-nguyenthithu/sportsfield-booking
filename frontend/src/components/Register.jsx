@@ -131,6 +131,8 @@ export default function Register({ onLogin }) {
 
 
   return (
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col flex-grow items-center justify-center">
+
     <div className="w-full max-w-md bg-gray-800 p-6 rounded-lg">
       {step === 1 ? (
         <> {/* Step1 */}
@@ -215,6 +217,7 @@ export default function Register({ onLogin }) {
           <p className="text-center text-sm"><button onClick={()=>setStep(1)} className="text-indigo-400 underline">Quay lại</button></p>
         </>
       )}
+    </div>
     </div>
   );
 }

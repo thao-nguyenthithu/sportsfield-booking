@@ -1,33 +1,72 @@
 import React, { useEffect, useState } from "react";
+import bcrypt from "bcryptjs";
+
+const generateRandomPassword = () => {
+  const length = 8;
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    password += charset.charAt(Math.floor(Math.random() * charset.length));
+  }
+  return password;
+};
+
+const isValidEmail = (email) => {
+  // Regex kiểm tra định dạng email cơ bản
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState({ email: "", role: "User" });
   const [showForm, setShowForm] = useState(false);
+  const [newPasswordInfo, setNewPasswordInfo] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    // Giả lập fetch dữ liệu
     setUsers([
-      { id: 1, email: "admin@example.com", role: "Admin" },
-      { id: 2, email: "manager@example.com", role: "Manager" },
-      { id: 3, email: "user@example.com", role: "User" },
+      { id: 1, email: "admin@example.com", role: "Admin", password: "abc12345" },
+      { id: 2, email: "manager@example.com", role: "Manager", password: "xyz12345" },
+      { id: 3, email: "user@example.com", role: "User", password: "qwe78901" },
     ]);
   }, []);
 
-  const handleSave = (user) => {
+  const handleSave = async (user) => {
+    if (!isValidEmail(user.email)) {
+      setErrorMessage("Email không đúng định dạng.");
+      return;
+    }
+
+    setErrorMessage("");
+
     if (user.id) {
-      // Cập nhật
       setUsers(users.map((u) => (u.id === user.id ? user : u)));
     } else {
-      // Thêm mới
-      setUsers([...users, { ...user, id: users.length + 1 }]);
+      const rawPassword = generateRandomPassword();
+      const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+      const newUser = {
+        ...user,
+        id: users.length + 1,
+        password: rawPassword, // Dùng password gốc để hiển thị
+      };
+
+      setUsers([...users, newUser]);
+      setNewPasswordInfo({ email: user.email, password: rawPassword });
     }
+
     setShowForm(false);
-    setSelectedUser(null);
+    setSelectedUser({ email: "", role: "User" });
   };
 
   const handleDelete = (id) => {
     setUsers(users.filter((u) => u.id !== id));
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    alert("Đã sao chép mật khẩu vào clipboard!");
   };
 
   return (
@@ -36,11 +75,36 @@ const UserManagement = () => {
         <h2 className="text-xl font-semibold text-[#4CAF50]">Quản lý người dùng</h2>
         <button
           className="bg-[#FF6A00] hover:bg-[#FF8C00] text-white py-2 px-4 rounded-lg"
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setSelectedUser({ email: "", role: "User" });
+            setShowForm(true);
+            setNewPasswordInfo(null);
+            setErrorMessage("");
+          }}
         >
           Thêm người dùng
         </button>
       </div>
+
+      {errorMessage && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-800 rounded">
+          {errorMessage}
+        </div>
+      )}
+
+      {newPasswordInfo && (
+        <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded">
+          <p><strong>Người dùng mới:</strong> {newPasswordInfo.email}</p>
+          <p><strong>Mật khẩu:</strong> {newPasswordInfo.password}</p>
+          <button
+            className="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded"
+            onClick={() => copyToClipboard(newPasswordInfo.password)}
+          >
+            Sao chép mật khẩu
+          </button>
+        </div>
+      )}
+
       {showForm && (
         <div className="bg-white p-4 rounded-lg mb-4 shadow-lg">
           <input
@@ -64,7 +128,7 @@ const UserManagement = () => {
           </select>
           <button
             className="bg-[#FF6A00] hover:bg-[#FF8C00] text-white py-2 px-4 rounded-lg"
-            onClick={() => handleSave(selectedUser || {})}
+            onClick={() => handleSave(selectedUser)}
           >
             Lưu
           </button>
@@ -76,12 +140,14 @@ const UserManagement = () => {
           </button>
         </div>
       )}
+
       <table className="w-full bg-white rounded-lg shadow-lg border border-[#4CAF50]">
-        <thead className="bg-[#b6f1b1]"> 
+        <thead className="bg-[#b6f1b1]">
           <tr className="border-b border-[#4CAF50]">
             <th className="py-2 text-gray-600 text-center">ID</th>
             <th className="py-2 text-gray-600 text-center">Email</th>
             <th className="py-2 text-gray-600 text-center">Quyền</th>
+            <th className="py-2 text-gray-600 text-center">Mật khẩu</th>
             <th className="py-2 text-gray-600 text-center">Hành động</th>
           </tr>
         </thead>
@@ -91,12 +157,15 @@ const UserManagement = () => {
               <td className="py-2 text-gray-800 text-center">{user.id}</td>
               <td className="py-2 text-gray-800 text-center">{user.email}</td>
               <td className="py-2 text-gray-800 text-center">{user.role}</td>
+              <td className="py-2 text-gray-800 text-center">{user.password}</td>
               <td className="py-2 space-x-2 text-center">
                 <button
                   className="bg-[#4CAF50] hover:bg-[#388E3C] text-white py-1 px-2 rounded-lg text-sm"
                   onClick={() => {
-                    setShowForm(true);
                     setSelectedUser(user);
+                    setShowForm(true);
+                    setNewPasswordInfo(null);
+                    setErrorMessage("");
                   }}
                 >
                   Sửa

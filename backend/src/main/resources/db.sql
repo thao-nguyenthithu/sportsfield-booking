@@ -1,3 +1,6 @@
+drop database sportsfield_booking;
+create database sportsfield_booking;
+
 drop table users;
 drop table authentication_code;
 

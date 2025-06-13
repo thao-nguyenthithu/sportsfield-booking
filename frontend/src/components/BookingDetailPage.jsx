@@ -1,7 +1,5 @@
 import React from 'react';
 
-// ❌ Bỏ useParams nếu bạn không dùng react-router
-// import { useParams } from 'react-router-dom';
 
 const BookingDetailPage = ({ id }) => {
   return (

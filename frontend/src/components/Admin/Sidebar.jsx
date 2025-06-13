@@ -35,12 +35,6 @@ const Sidebar = ({ setActiveSection }) => {
         >
           Quản lý Manager
         </li>
-        <li
-          className="hover:bg-[#3B82F6] p-2 rounded cursor-pointer"
-          onClick={() => setActiveSection("Báo cáo")}
-        >
-          Báo cáo
-        </li>
       </ul>
     </div>
   );

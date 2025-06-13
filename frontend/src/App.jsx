@@ -82,6 +82,7 @@ function App() {
         onBookingClick={() => setView('bookingpage')}
         onLogout={handleLogout}
         user={user}
+        onAdminClick={() => setView('homead')}
       />
       <main>
         {view === 'home' && <Home />}
@@ -95,7 +96,7 @@ function App() {
         )}
         {view === 'forgot' && <ForgotPassword emailInit={forgotEmail} onDone={() => setView('login')} />}
         {view === 'bookingpage' && <BookingPage />}
-        {view === 'homead' && <HomeAd />} {/* Sử dụng 'homead' thay vì 'admin' */}
+        {view === 'homead' && <HomeAd />}
       </main>
       <Footer />
     </div>

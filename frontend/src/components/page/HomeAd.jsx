@@ -5,7 +5,6 @@ import UserManagement from "../Admin/UserManagement";
 import FieldManagement from "../Admin/FieldManagement";
 import ManagerManagement from "../Admin/ManagerManagement";
 import SearchBar from "../Admin/SearchBar";
-import ReportSection from "../Admin/ReportSection";
 import Alert from "../Admin/Alert";
 import BranchManagement from "../Admin/BranchManagement";
 
@@ -57,8 +56,6 @@ const HomeAd = () => {
         return <BranchManagement branches={branches} setBranches={setBranches} />;
       case "Quản lý Manager":
         return <ManagerManagement branches={branches} setBranches={setBranches} managers={managers} setManagers={setManagers} />;
-      case "Báo cáo":
-        return <ReportSection />;
       default:
         return <Dashboard />;
     }

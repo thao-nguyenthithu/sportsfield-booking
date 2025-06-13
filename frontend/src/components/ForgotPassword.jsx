@@ -79,9 +79,10 @@ export default function ForgotPassword({ emailInit, onDone }) {
   };
 
   return (
-    <div className="w-full max-w-md bg-gray-800 p-6 rounded-lg">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col flex-grow items-center justify-center">
+    <div className="w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-lg">
       {step === 1 && <>
-        <h2 className="text-2xl font-bold mb-6">Khôi phục mật khẩu</h2>
+        <h2 className="text-2xl font-bold text-green-600 mb-6 text-center">Khôi phục mật khẩu</h2>
         <div className="mb-4">
           <input
             type="email"
@@ -127,6 +128,7 @@ export default function ForgotPassword({ emailInit, onDone }) {
         {passError && <div className="text-center text-red-400 mb-2">{passError}</div>}
         <button onClick={handleResetPass} className="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded text-white">Quay lại để đăng nhập &rsaquo;</button>
       </>}
+    </div>
     </div>
   );
 }

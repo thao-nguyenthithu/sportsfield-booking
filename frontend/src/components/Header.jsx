@@ -40,7 +40,7 @@ function Header({ onLoginClick, onLogout, user, onBookingClick, onAdminClick }) 
       {/* Menu trung tâm */}
       <ul className="hidden md:flex space-x-6 text-sm font-medium text-gray-700">
         <li><a href="/" className="hover:text-orange-500">Trang chủ</a></li>
-        <button onClick={onBookingClick} className="hover:text-orange-500">Đặt sân ngay</button>
+        <button onClick={onBookingClick} className="hover:text-orange-500">Đặt sân</button>
         <li><a href="/guide" className="hover:text-orange-500">Hướng dẫn</a></li>
         <li><a href="/contact" className="hover:text-orange-500">Liên hệ</a></li>
         <li><button onClick={onAdminClick} className="hover:text-orange-500">Admin</button></li>

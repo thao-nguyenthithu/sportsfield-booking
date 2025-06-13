@@ -7,6 +7,7 @@ import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword';
 import BookingPage from './components/BookingPage';
 import BookingDetailPage from './components/BookingDetailPage';
+import ContactForm from './components/ContactForm';
 import HomeAd from './components/page/HomeAd';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
       <Header 
         onLoginClick={() => setView('login')} 
         onBookingClick={() => setView('bookingpage')}
+        onContactClick={() => setView('contactform')}
         onLogout={handleLogout}
         user={user}
         onAdminClick={() => setView('homead')}
@@ -61,9 +63,12 @@ function App() {
             }}
           />
         )}
-          {view === 'bookingdetailpage' && (
-            <BookingDetailPage id={selectedFieldId} />
-          )}
+        {view === 'bookingdetailpage' && (
+          <BookingDetailPage id={selectedFieldId} />
+        )}
+
+        {view === 'contactform' && <ContactForm />}
+
         {view === 'homead' && <HomeAd />}
       </main>
       <Footer />

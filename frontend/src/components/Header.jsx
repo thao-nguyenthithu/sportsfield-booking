@@ -28,7 +28,7 @@
 // export default Header;
 import React from 'react';
 
-function Header({ onLoginClick, onLogout, user, onBookingClick, onAdminClick }) {
+function Header({ onLoginClick, onLogout, user, onBookingClick, onContactClick, onAdminClick }) {
   return (
     <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md sticky top-0 z-50">
       {/* Logo */}
@@ -42,7 +42,7 @@ function Header({ onLoginClick, onLogout, user, onBookingClick, onAdminClick }) 
         <li><a href="/" className="hover:text-orange-500">Trang chủ</a></li>
         <button onClick={onBookingClick} className="hover:text-orange-500">Đặt sân</button>
         <li><a href="/guide" className="hover:text-orange-500">Hướng dẫn</a></li>
-        <li><a href="/contact" className="hover:text-orange-500">Liên hệ</a></li>
+        <li><button onClick={onContactClick} className="hover:text-orange-500">Liên hệ</button></li>
         <li><button onClick={onAdminClick} className="hover:text-orange-500">Admin</button></li>
 
       </ul>
